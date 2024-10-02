@@ -47,9 +47,9 @@ To run this app locally:
 
 ## Technologies Used 
 
-Kotlin/JetCompose : For App Development
+Jetpack Compose UI / Kotlin : For App Development
 Retrofit : To handle API Request
-Room/SQLite : For Local Data Storage
+Room : For Local Data Storage
 Glide : Caching the Image loading 
 ExoPlayer: To Handle audio playback.
 
