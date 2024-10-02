@@ -2,11 +2,6 @@
 
 This repository contains the code for a mobile application created as part of the second phase of the interview process with BFM. The app displays podcasts and live stream data fetched from a JSON endpoint and allows users to play audio streams.
 
-## Task Overview
-
-- **Start date**: 3 October 2024
-- **End date**: 9 October 2024
-- **Submission email**: techjobs@bfm.my
 
 ### Requirements
 
