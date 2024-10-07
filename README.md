@@ -13,6 +13,7 @@ The app must:
    - **Guest Details**: Provided in the API
    - **Published Date**: Displayed in the format "5 Jan 2024, 10:00am" (converted from UNIX time format in the `interviewtime` field)
    - **Podcast Image**: Display the corresponding images.
+     
 2. Include an audio player that plays the podcast streams.
 
 
@@ -43,14 +44,21 @@ To run this app locally:
 
 ## Technologies Used 
 
-Jetpack Compose UI / Kotlin : For App Development
-Retrofit : To handle API Request
-Glide : Caching the Image loading 
-ExoPlayer: To Handle audio playback.
+- Jetpack Compose UI / Kotlin : For App Development
+- Retrofit : To handle API Request
+- Coil : An image loading library 
+- ExoPlayer: To Handle audio playback.
 
 ## Design
 
 The app follows the design provided by BFM, which includes the podcast title, subtitle, guest details, published date, and podcast image.
+
+
+## Future improvement
+- improving the offline mode with full feature caching using ROOM
+- Implementing media controls (pause, seek, resume) in the player
+- Adding a notification for ongoing playback.
+- Play LiveStream and Podcast while in Background using WorkManager 
 
 ## License
 
