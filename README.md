@@ -15,10 +15,6 @@ The app must:
    - **Podcast Image**: Display the corresponding images.
 2. Include an audio player that plays the podcast streams.
 
-### Optional Enhancements
-
-- Additional styling for better user experience.
-- Extra player functions such as pause, seek, or volume control.
 
 ## JSON Endpoint
 
@@ -49,7 +45,6 @@ To run this app locally:
 
 Jetpack Compose UI / Kotlin : For App Development
 Retrofit : To handle API Request
-Room : For Local Data Storage
 Glide : Caching the Image loading 
 ExoPlayer: To Handle audio playback.
 
