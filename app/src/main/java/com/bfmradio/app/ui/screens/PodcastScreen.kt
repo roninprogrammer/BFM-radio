@@ -138,7 +138,7 @@ fun StreamIt(isPlaying: Boolean, onClick: () -> Unit) {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun PodcastItem(podcast: Podcast, playbackState: MutableMap<String, Boolean> , isPlaying: Boolean, onClick: () -> Unit) {
+fun PodcastItem(podcast: Podcast, isPodCastPlay: Boolean, playbackState: MutableMap<String, Boolean> , isPlaying: Boolean, onClick: () -> Unit) {
     val bfmFontFamily = FontFamily(
         Font(R.font.roboto_regular, FontWeight.Medium)
     )
@@ -192,13 +192,13 @@ fun PodcastItem(podcast: Podcast, playbackState: MutableMap<String, Boolean> , i
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = podcast.data?.guests?.joinToString(", ") ?: "Guest details go here",
+                text = podcast.data?.guests?.joinToString(", ") ?: Utils.placeHolderGuestDetails(),
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
                 text = podcast.data?.interviewtime?.toLongOrNull()?.let {
                     formatUnixTime(it)
-                } ?: "5 Jan 2024, 10:00am",
+                } ?: Utils.placeHolderTimeStamp(),
                 style = MaterialTheme.typography.bodySmall.copy(
                     fontStyle = FontStyle.Italic,
                     color = Color.Gray
@@ -208,22 +208,20 @@ fun PodcastItem(podcast: Podcast, playbackState: MutableMap<String, Boolean> , i
 
         CastIt(
             isPlaying = isPlaying,
+            isPodCastPlay = isPodCastPlay,
             onClick = {
                 onClick()
-                podcast.data?.id?.let { id ->
-                    playbackState[id] = !(playbackState[id] ?: false)
-                }
             }
         )
     }
 }
 
 @Composable
-fun CastIt(isPlaying: Boolean, onClick: () -> Unit) {
+fun CastIt(isPlaying: Boolean, isPodCastPlay: Boolean, onClick: () -> Unit) {
     IconButton(onClick = onClick) {
         Image(
-            painter = painterResource(if (isPlaying) R.drawable.ic_pause_black else R.drawable.ic_play),
-            contentDescription = if (isPlaying) "Pause" else "Play",
+            painter = painterResource(if (isPlaying || isPodCastPlay) R.drawable.ic_pause_black else R.drawable.ic_play),
+            contentDescription = if (isPlaying || isPodCastPlay) "Pause" else "Play",
         )
     }
 }
@@ -235,11 +233,9 @@ fun CastIt(isPlaying: Boolean, onClick: () -> Unit) {
 fun PodcastScreen(viewModel: PodcastViewModel) {
     val podcastList by viewModel.podcasts.collectAsState(initial = emptyList())
     var isLiveStream by rememberSaveable { mutableStateOf(false) }
+    var isPodCastPlay by rememberSaveable { mutableStateOf(false) }
     var isLoading by rememberSaveable { mutableStateOf(false) }
     val playbackState = remember { mutableMapOf<String, Boolean>() }
-
-
-
 
     val bfmFontFamily = FontFamily(
         Font(R.font.roboto_bold, FontWeight.Bold)
@@ -296,19 +292,27 @@ fun PodcastScreen(viewModel: PodcastViewModel) {
                         )
                     }
 
+
                     Utils.podcast() -> {
                         PodcastItem(
                             podcast = podcast,
                             isPlaying = playbackState[podcast.data?.id] ?: false,
+                            isPodCastPlay = isPodCastPlay,
                             playbackState = playbackState,
                             onClick = {
-                                podcast.data?.id?.let { id ->
-                                    playbackState[id] = !(playbackState[id] ?: false)
+                                val currentlyPlayingId = playbackState.entries.find { it.value }?.key
+                                if (currentlyPlayingId != null && currentlyPlayingId != podcast.data?.id) {
+                                    playbackState[currentlyPlayingId] = false
+                                    podcastList.find { it.data?.id == currentlyPlayingId }?.data?.mp3?.let { viewModel.pauseAudio(it) }
                                 }
-                                if (playbackState[podcast.data?.id] == true) {
-                                    podcast.data?.mp3?.let { viewModel.playAudio(it) }
+                                val isCurrentlyPlaying = playbackState[podcast.data?.id] ?: false
+                                playbackState[podcast.data?.id!!] = !isCurrentlyPlaying
+                                if (playbackState[podcast.data.id] == true) {
+                                    podcast.data.mp3?.let { viewModel.playAudio(it) }
+                                    isPodCastPlay = true
                                 } else {
-                                    podcast.data?.mp3?.let { viewModel.pauseAudio(it) }
+                                    podcast.data.mp3?.let { viewModel.pauseAudio(it) }
+                                    isPodCastPlay = false
                                 }
                             }
                         )
