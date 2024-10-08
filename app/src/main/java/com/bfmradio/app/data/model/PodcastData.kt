@@ -8,7 +8,7 @@ data class PodcastData(
     val id: String? = null,
 
     @SerialName("mp3_duration")
-    val mp3Duration: String? = null,
+    val mp3_duration: String? = null,
 
     @SerialName("mp3file_size")
     val mp3FileSize: String? = null,
