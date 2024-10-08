@@ -8,7 +8,6 @@ The app is designed to display podcast titles, subtitles , guest details and pub
 ### The project uses:
 - **Retrofit** for fetching data from the API
 - **Jetpack Compose** for building the UI
-- **Room** for caching podcast data locally
 - **Coroutines** for handling background tasks
 
 
@@ -96,15 +95,6 @@ The data is fetched using Retrofit and displayed in the app. The response data i
 }
 ```
 
-## DATABASE 
-
-The Podcast data is stored locally using Room . This ensure that the app has fallback mechanism when the user is offline. 
-
-
-- *PodcastEntity*: Represents the podcast object in the Room database.
-- *PodcastDao*: Data Access Object that defines methods to interact with the database (e.g., insert, query, delete).
-- *PodcastDatabase*: Main database class that provides an instance of the database and DAO.
-
 
 ## ViewModel and Repository
 
@@ -139,8 +129,7 @@ return format.format(date)
 The app allows users to play podcasts through the audio player. You can extend the player with additional features like: 
 
 - Pause nad resume 
-- Seek forward and backward
-- Display playback progress
+
 
 ## Future improvement 
 - improving the offline mode with full feature caching
