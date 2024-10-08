@@ -18,7 +18,6 @@ object Utils {
             .withZone(ZoneId.systemDefault())
         return formatter.format(instant)
     }
-
     fun getApplicationTitle(): String {
         return "Basic BFM Player"
     }
@@ -31,12 +30,20 @@ object Utils {
         return "podcast"
     }
 
-    fun lostConnection(): String {
-        return "Network is unavailable. Please check your connection."
+    fun settings(): String {
+        return "Settings"
     }
 
-    fun onlineConnection(): String {
-        return "You are now connected to the internet!."
+    fun placeHolderGuestDetails(): String {
+        return "Guest details go here"
+    }
+
+    fun placeHolderTimeStamp(): String {
+        return "5 Jan 2024, 10:00am"
+    }
+
+    fun lostConnection(): String {
+        return "Network is unavailable. Please check your connection."
     }
 
 
