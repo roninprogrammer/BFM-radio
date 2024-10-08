@@ -318,9 +318,9 @@ fun PodcastScreen(viewModel: PodcastViewModel) {
                         )
                     }
                 }
+                Spacer(modifier = Modifier.height(10.dp))
+                Divider(color = Color.LightGray, thickness = 0.5.dp)
             }
-            Spacer(modifier = Modifier.height(10.dp))
-            Divider(color = Color.LightGray, thickness = 0.5.dp)
         }
     }
 }
