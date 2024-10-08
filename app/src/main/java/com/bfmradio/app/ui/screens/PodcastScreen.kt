@@ -2,7 +2,6 @@ package com.bfmradio.app.ui.screens
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -17,14 +16,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -53,33 +48,25 @@ import com.bfmradio.app.utils.Utils
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicText
-import androidx.compose.material3.Button
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
-import com.bfmradio.app.utils.isNetworkAvailable
-import kotlinx.coroutines.launch
+import com.bfmradio.app.utils.Utils.formatUnixTime
 
 @SuppressLint("RememberReturnType")
 @Composable
-fun LiveStreamItem(title: String, isLiveStream: Boolean, isLoading: Boolean, onPlayClick: () -> Unit) {
+fun LiveStreamItem(title: String, isLiveStream: Boolean, onPlayClick: () -> Unit) {
     val backgroundColor = if (isLiveStream) Color(0xFF000000)
     else Color(0xFFE5E5E5)
 
@@ -209,15 +196,14 @@ fun PodcastItem(podcast: Podcast, playbackState: MutableMap<String, Boolean> , i
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                text = podcast.data?.interviewTime?.toLongOrNull()?.let {
-                    Utils.formatUnixTime(it)
-                } ?: "Interview time not available",
+                text = podcast.data?.interviewtime?.toLongOrNull()?.let {
+                    formatUnixTime(it)
+                } ?: "5 Jan 2024, 10:00am",
                 style = MaterialTheme.typography.bodySmall.copy(
                     fontStyle = FontStyle.Italic,
                     color = Color.Gray
                 )
             )
-
         }
 
         CastIt(
@@ -242,12 +228,6 @@ fun CastIt(isPlaying: Boolean, onClick: () -> Unit) {
     }
 }
 
-@Composable
-fun debuggingLog(valueToLog: String) {
-    // Log the value
-    Log.d("debuggingLog", "Value: $valueToLog")
-}
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -256,22 +236,9 @@ fun PodcastScreen(viewModel: PodcastViewModel) {
     val podcastList by viewModel.podcasts.collectAsState(initial = emptyList())
     var isLiveStream by rememberSaveable { mutableStateOf(false) }
     var isLoading by rememberSaveable { mutableStateOf(false) }
-    var isNetworkAvailable by rememberSaveable { mutableStateOf(true) }
-    val context = LocalContext.current
-    val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
-
     val playbackState = remember { mutableMapOf<String, Boolean>() }
 
 
-    LaunchedEffect(Unit) {
-        isNetworkAvailable = isNetworkAvailable(context)
-        if (!isNetworkAvailable) {
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar(Utils.lostConnection())
-            }
-        }
-    }
 
 
     val bfmFontFamily = FontFamily(
@@ -315,7 +282,6 @@ fun PodcastScreen(viewModel: PodcastViewModel) {
                         LiveStreamItem(
                             title = podcast.title,
                             isLiveStream = isLiveStream,
-                            isLoading = isLoading,
                             onPlayClick = {
                                 isLoading = true
                                 isLiveStream = !isLiveStream
@@ -351,17 +317,6 @@ fun PodcastScreen(viewModel: PodcastViewModel) {
             }
             Spacer(modifier = Modifier.height(10.dp))
             Divider(color = Color.LightGray, thickness = 0.5.dp)
-        }
-    }
-    LaunchedEffect(isNetworkAvailable) {
-        if (!isNetworkAvailable) {
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar(Utils.lostConnection())
-            }
-        } else {
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar(Utils.onlineConnection())
-            }
         }
     }
 }

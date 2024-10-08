@@ -35,7 +35,7 @@ data class PodcastData(
     val slug: String? = null,
 
     @SerialName("interviewtime")
-    val interviewTime: String? = null,
+    val interviewtime: String? = null,
 
     @SerialName("content_type")
     val contentType: String? = null,
