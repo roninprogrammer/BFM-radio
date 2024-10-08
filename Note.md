@@ -1,32 +1,37 @@
-#BFM podcast App Documentation 
-
+BFM Podcast App
 
 ## Overview
 
-The app is designed to display podcast titles, subtitles , guest details and published date (Converted from UNIX Time). The app also allows users to play audio streams for each podcast.
+The app displays podcast titles, subtitles, guest details, and published dates (converted from UNIX Time). It also allows users to play audio streams for each podcast and BFM live Stream.
 
 ### The project uses:
 - **Retrofit** for fetching data from the API
 - **Jetpack Compose** for building the UI
 - **Coroutines** for handling background tasks
 
+---
 
-## Key Features
-- Fetch podcast data from the API and display it in a list.
-- Caching data using Room for offline access.
-- Audio playback for podcasts.
-- Display podcast details like title, subtitle, guest details, and published date.
+# Key Features
 
-## API Integration
-The app retrieves data from an API that returns a list of podcasts with details such as:
+- Fetch podcast data from the API and display it in a list
+- Check Network
+- Audio playback for podcasts
+- Display podcast details like title, subtitle, guest details, and published date
+
+---
+
+# API Integration
+
+The app retrieves data from an API that returns podcast details, including:
 - Title
-- Subtitle
 - Guest details
-- Published date (in UNIX time format)
+- Published date (in UNIX format)
 - Audio URL for playback
 - Image URL for display
 
-The data is fetched using Retrofit and displayed in the app. The response data is cached in Room for offline usage.
+Data is fetched using Retrofit.
+
+---
 
 ### Example API response:
 ```json
@@ -94,24 +99,25 @@ The data is fetched using Retrofit and displayed in the app. The response data i
   }
 }
 ```
-
+## Architecture
 
 ## ViewModel and Repository
 
-The PodcastViewModel is responsible for managing UI related data. it interact with with PodcastRepository, which abstracts the data sources(API and Room). 
-The ViewModel retrieves cached data from Room First and the fetches fresh data from the API, updating the UI accordingly. 
+The PodcastViewModel is responsible for managing UI related data. it interact with with PodcastRepository, which abstracts the data sources(API and Room).
+
+The ViewModel retrieves cached data from Room First and the fetches fresh data from the API, updating the UI accordingly.
 
 
-## Jetpack Compose UI 
+## Jetpack Compose UI
 
 The app uses Jetpack Compose to build the UI , ensure the modern , reactive UI.
 
 - *MainScreen*: Displays a list of podcasts, showing their title, subtitle, guest details, and published date.
 - *Audio Playback*: The user can play podcasts directly from the list. The playback controls can be extended with additional functionalities like pause, resume, and stop.
 
-## Formatting Dates 
+## Formatting Dates
 
-Required provided in UNIX format and is converted to a readable format using the following functions: 
+Required provided in UNIX format and is converted to a readable format using the following functions:
 
 ```kotlin
 import java.text.SimpleDateFormat
@@ -124,22 +130,28 @@ val format = SimpleDateFormat("d MMM yyyy, h:mm a", Locale.getDefault())
 return format.format(date)
 }
 ```
+
+
 ## Audio Playback
 
-The app allows users to play podcasts through the audio player. You can extend the player with additional features like: 
+The app allows users to play podcasts through the audio player.
 
-- Pause nad resume 
-
-
-## Future improvement 
-- improving the offline mode with full feature caching
-- Implementing media controls (pause, seek, resume) in the player
-- Adding a notification for ongoing playback.
 
 ## How to run the App
 
-1. *Clone the Repository*: Clone the project repository to local machine
+1. *Clone the Repository*: Clone the project repository (https://github.com/roninprogrammer/BFM-radio) to local machine .  Do checkout to master branch.
+
 2. *Install Dependencies*: Ensure that you have the necerssary dependencies set up in build.gradle.
+
 3. *Run the App*: Open the project in Android Studio and run it on an emulator and a physical devices.
 
+## DEMO TIME
 
+
+## Future improvement
+- improving the offline mode with full feature caching using ROOM Database
+- Implementing media controls (pause, seek, resume) in the player
+- Adding a notification for ongoing playback using firebase Cloud Massaging.
+
+## End Of Presentation
+- "Feel free to ask any questions! If you encounter any issues, please label them accordingly in the GitHub project. 
