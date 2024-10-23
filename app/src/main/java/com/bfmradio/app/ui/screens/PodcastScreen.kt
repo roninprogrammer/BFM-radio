@@ -235,12 +235,7 @@ fun CastIt(isPlaying: Boolean, isPodCastPlay: Boolean, onClick: () -> Unit) {
 fun PodcastScreen(viewModel: PodcastViewModel) {
     val podcastList by viewModel.podcasts.collectAsState(initial = emptyList())
     var isLiveStream by rememberSaveable { mutableStateOf(false) }
-    var isPodCastPlay by rememberSaveable { mutableStateOf(false) }
     var isLoading by rememberSaveable { mutableStateOf(false) }
-    val playbackState = remember { mutableMapOf<String, Boolean>() }
-
-
-    // Keep track of currently playing podcast ID
     var currentlyPlayingId by rememberSaveable { mutableStateOf<String?>(null) }
 
 
