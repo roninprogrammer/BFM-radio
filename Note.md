@@ -147,6 +147,8 @@ The app allows users to play podcasts through the audio player.
 
 ## DEMO TIME
 
+- Download APK : https://tsfr.io/join/f79aue
+
 
 ## Future improvement
 - improving the offline mode with full feature caching using ROOM Database
