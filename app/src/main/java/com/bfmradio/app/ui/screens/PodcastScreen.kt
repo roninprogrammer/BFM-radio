@@ -52,6 +52,8 @@ import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -138,7 +140,7 @@ fun StreamIt(isPlaying: Boolean, onClick: () -> Unit) {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun PodcastItem(podcast: Podcast, isPodCastPlay: Boolean, playbackState: MutableMap<String, Boolean> , isPlaying: Boolean, onClick: () -> Unit) {
+fun PodcastItem(podcast: Podcast, isPodCastPlay: Boolean, playbackState: Map<Any, Any>, isPlaying: Boolean, onClick: () -> Unit) {
     val bfmFontFamily = FontFamily(
         Font(R.font.roboto_regular, FontWeight.Medium)
     )
@@ -237,6 +239,11 @@ fun PodcastScreen(viewModel: PodcastViewModel) {
     var isLoading by rememberSaveable { mutableStateOf(false) }
     val playbackState = remember { mutableMapOf<String, Boolean>() }
 
+
+    // Keep track of currently playing podcast ID
+    var currentlyPlayingId by rememberSaveable { mutableStateOf<String?>(null) }
+
+
     val bfmFontFamily = FontFamily(
         Font(R.font.roboto_bold, FontWeight.Bold)
     )
@@ -265,14 +272,14 @@ fun PodcastScreen(viewModel: PodcastViewModel) {
             )
         }
     ) { innerPadding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(16.dp),
             verticalArrangement = Arrangement.Top,
         ) {
-            podcastList.forEach { podcast ->
+            items(podcastList) { podcast ->
                 when (podcast.type) {
                     Utils.livestream() -> {
                         LiveStreamItem(
@@ -280,6 +287,14 @@ fun PodcastScreen(viewModel: PodcastViewModel) {
                             isLiveStream = isLiveStream,
                             onPlayClick = {
                                 isLoading = true
+                                currentlyPlayingId?.let {
+                                    podcastList.find { p -> p.data?.id == it }?.data?.mp3?.let { mp3 ->
+                                        viewModel.pauseAudio(mp3)
+                                    }
+                                }
+                                currentlyPlayingId = null
+
+
                                 isLiveStream = !isLiveStream
                                 isLoading = if (isLiveStream) {
                                     viewModel.playAudio(podcast.source)
@@ -292,32 +307,39 @@ fun PodcastScreen(viewModel: PodcastViewModel) {
                         )
                     }
 
-
                     Utils.podcast() -> {
                         PodcastItem(
                             podcast = podcast,
-                            isPlaying = playbackState[podcast.data?.id] ?: false,
-                            isPodCastPlay = isPodCastPlay,
-                            playbackState = playbackState,
+                            isPlaying = currentlyPlayingId == podcast.data?.id,
+                            isPodCastPlay = currentlyPlayingId == podcast.data?.id,
+                            playbackState = emptyMap(),
                             onClick = {
-                                val currentlyPlayingId = playbackState.entries.find { it.value }?.key
-                                if (currentlyPlayingId != null && currentlyPlayingId != podcast.data?.id) {
-                                    playbackState[currentlyPlayingId] = false
-                                    podcastList.find { it.data?.id == currentlyPlayingId }?.data?.mp3?.let { viewModel.pauseAudio(it) }
+                                if (isLiveStream) {
+                                    isLiveStream = false
+                                    podcastList.find { it.type == Utils.livestream() }?.source?.let {
+                                        viewModel.pauseAudio(it)
+                                    }
                                 }
-                                val isCurrentlyPlaying = playbackState[podcast.data?.id] ?: false
-                                playbackState[podcast.data?.id!!] = !isCurrentlyPlaying
-                                if (playbackState[podcast.data.id] == true) {
-                                    podcast.data.mp3?.let { viewModel.playAudio(it) }
-                                    isPodCastPlay = true
+
+                                if (currentlyPlayingId == podcast.data?.id) {
+                                    podcast.data?.mp3?.let { viewModel.pauseAudio(it) }
+                                    currentlyPlayingId = null
                                 } else {
-                                    podcast.data.mp3?.let { viewModel.pauseAudio(it) }
-                                    isPodCastPlay = false
+                                    currentlyPlayingId?.let { playingId ->
+                                        podcastList.find { it.data?.id == playingId }?.data?.mp3?.let { mp3 ->
+                                            viewModel.pauseAudio(mp3)
+                                        }
+                                    }
+                                    podcast.data?.mp3?.let {
+                                        viewModel.playAudio(it)
+                                        currentlyPlayingId = podcast.data.id
+                                    }
                                 }
                             }
                         )
                     }
                 }
+
                 Spacer(modifier = Modifier.height(10.dp))
                 Divider(color = Color.LightGray, thickness = 0.5.dp)
             }
